@@ -150,6 +150,10 @@ export function stepsDeclarative<T extends StepsDef>(def: T): StepsRunner<T> {
 
       multi.start();
 
+      // Yield to event loop to ensure initial render is displayed
+      // before we start modifying task states
+      await new Promise((r) => setImmediate(r));
+
       const results: Record<string, unknown> = {};
 
       try {
@@ -197,6 +201,10 @@ export function stepsDeclarative<T extends StepsDef>(def: T): StepsRunner<T> {
       const completedLeaves = new Set<StepNode>();
 
       multi.start();
+
+      // Yield to event loop to ensure initial render is displayed
+      // before we start modifying task states
+      await new Promise((r) => setImmediate(r));
 
       let previousResult: unknown = undefined;
 
