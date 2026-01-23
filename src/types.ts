@@ -142,3 +142,97 @@ export interface TaskProps {
   /** Children (e.g., nested progress bar) */
   children?: React.ReactNode;
 }
+
+/** Props for React TextInput component */
+export interface TextInputProps {
+  /** Current input value (controlled) */
+  value: string;
+  /** Called when value changes */
+  onChange: (value: string) => void;
+  /** Placeholder text when empty */
+  placeholder?: string;
+  /** Mask character for password input (e.g., "*") */
+  mask?: string;
+  /** Autocomplete suggestions */
+  autocomplete?: string[];
+  /** Called when autocomplete suggestion is selected */
+  onAutocomplete?: (suggestion: string) => void;
+  /** Called when Enter is pressed */
+  onSubmit?: (value: string) => void;
+  /** Cursor position (for rendering) */
+  cursorPosition?: number;
+  /** Whether input is focused */
+  focused?: boolean;
+}
+
+/** Options for withTextInput CLI wrapper */
+export interface TextInputOptions {
+  /** Placeholder text shown when input is empty */
+  placeholder?: string;
+  /** Mask character for password input (e.g., "*") */
+  mask?: string;
+  /** Validation function - return error message or undefined if valid */
+  validate?: (value: string) => string | undefined;
+  /** Autocomplete suggestions */
+  autocomplete?: string[];
+  /** Default value */
+  defaultValue?: string;
+  /** Output stream (default: process.stdout) */
+  stream?: NodeJS.WriteStream;
+  /** Input stream (default: process.stdin) */
+  inputStream?: NodeJS.ReadStream;
+}
+
+/** Column definition for Table component */
+export interface TableColumn {
+  /** Key in data objects to display */
+  key: string;
+  /** Header text */
+  header: string;
+  /** Fixed column width (auto-calculated from content if not specified) */
+  width?: number;
+  /** Text alignment within the column */
+  align?: "left" | "center" | "right";
+}
+
+/** Props for React Table component */
+export interface TableProps {
+  /** Column definitions */
+  columns: TableColumn[];
+  /** Data rows to display */
+  data: Array<Record<string, unknown>>;
+  /** Show box borders around cells */
+  border?: boolean;
+}
+
+/** Option for Select component */
+export interface SelectOption<T> {
+  /** Display text for this option */
+  label: string;
+  /** Value returned when selected */
+  value: T;
+}
+
+/** Props for React Select component */
+export interface SelectProps<T> {
+  /** Available options */
+  options: SelectOption<T>[];
+  /** Currently selected value */
+  value?: T;
+  /** Called when selection changes */
+  onChange?: (value: T) => void;
+  /** Maximum number of visible options (default: 10) */
+  maxVisible?: number;
+  /** Controlled highlight index for keyboard navigation */
+  highlightIndex?: number;
+  /** Called when highlight index changes */
+  onHighlightChange?: (index: number) => void;
+}
+
+/** Options for withSelect CLI wrapper */
+export interface WithSelectOptions {
+  /** Initial highlighted index (default: 0) */
+  initial?: number;
+  /** Maximum number of visible options (default: 10) */
+  maxVisible?: number;
+}

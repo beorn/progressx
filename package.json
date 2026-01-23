@@ -33,6 +33,14 @@
     "./progress": {
       "import": "./src/progress/index.ts",
       "types": "./src/progress/index.ts"
+    },
+    "./display": {
+      "import": "./src/display/index.ts",
+      "types": "./src/display/index.ts"
+    },
+    "./input": {
+      "import": "./src/input/index.ts",
+      "types": "./src/input/index.ts"
     }
   },
   "files": [
