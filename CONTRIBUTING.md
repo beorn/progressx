@@ -105,7 +105,7 @@ describe("Spinner", () => {
 - Include `@example` blocks for components and functions
 - Keep comments concise and useful
 
-```ts
+````ts
 /**
  * Animated spinner component for React TUI apps
  *
@@ -115,7 +115,7 @@ describe("Spinner", () => {
  * ```
  */
 export function Spinner({ ... }): React.ReactElement {
-```
+````
 
 ## Pull Request Process
 
@@ -142,6 +142,7 @@ export function Spinner({ ... }): React.ReactElement {
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -150,6 +151,7 @@ Types:
 - `chore`: Maintenance tasks
 
 Examples:
+
 ```
 feat: add bounce spinner style
 fix: handle zero total in progress bar

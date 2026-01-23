@@ -124,7 +124,10 @@ describe("React Components", () => {
 
   describe("Tasks", () => {
     it("renders as container for Task children", () => {
-      const task1 = createElement(Task, { title: "Task 1", status: "completed" });
+      const task1 = createElement(Task, {
+        title: "Task 1",
+        status: "completed",
+      });
       const task2 = createElement(Task, { title: "Task 2", status: "running" });
       const element = createElement(Tasks, null, task1, task2);
 

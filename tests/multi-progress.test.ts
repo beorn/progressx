@@ -263,9 +263,7 @@ describe("MultiProgress", () => {
         task.update(50);
 
         // Verify via _getTask internal method
-        const taskState = (multi as any)._getTask(
-          (task as any).id,
-        );
+        const taskState = (multi as any)._getTask((task as any).id);
         expect(taskState.current).toBe(50);
       });
 
@@ -289,9 +287,7 @@ describe("MultiProgress", () => {
         task.setTitle("Updated title");
 
         // Verify via _getTask internal method
-        const taskState = (multi as any)._getTask(
-          (task as any).id,
-        );
+        const taskState = (multi as any)._getTask((task as any).id);
         expect(taskState.title).toBe("Updated title");
       });
 
@@ -337,7 +333,12 @@ describe("MultiProgress", () => {
         const task = multi.add("Chained task", { type: "bar", total: 100 });
 
         // All methods should be chainable
-        task.start().update(25).update(50).setTitle("Almost done").complete("Done!");
+        task
+          .start()
+          .update(25)
+          .update(50)
+          .setTitle("Almost done")
+          .complete("Done!");
 
         expect(task.status).toBe("completed");
       });
