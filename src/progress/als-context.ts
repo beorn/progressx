@@ -33,6 +33,12 @@ export interface InternalStepContext extends StepContext {
   /** Add a sub-step handle (called by runner) */
   _addSubHandle(label: string, handle: TaskHandle): void;
 
+  /** Get a pre-declared sub-step handle by label */
+  _getSubHandle(label: string): TaskHandle | undefined;
+
+  /** Set the current sub-step (when starting a pre-declared step) */
+  _setCurrentSubHandle(label: string, handle: TaskHandle): void;
+
   /** Complete current sub-step (called by runner) */
   _completeSubStep(): void;
 }
@@ -87,6 +93,7 @@ export function createStepContext(
   let currentSubLabel: string | undefined;
   let currentSubHandle: TaskHandle | null = null;
   let subStepStartTime = 0;
+  const declaredHandles = new Map<string, TaskHandle>();
 
   return {
     get label() {
@@ -119,6 +126,14 @@ export function createStepContext(
     },
 
     _addSubHandle(subLabel: string, subHandle: TaskHandle) {
+      declaredHandles.set(subLabel, subHandle);
+    },
+
+    _getSubHandle(subLabel: string) {
+      return declaredHandles.get(subLabel);
+    },
+
+    _setCurrentSubHandle(subLabel: string, subHandle: TaskHandle) {
       currentSubLabel = subLabel;
       currentSubHandle = subHandle;
       subStepStartTime = Date.now();

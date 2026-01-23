@@ -353,8 +353,23 @@ async function runGenerator<T>(
     const value = result.value;
 
     // Handle yielded values
-    if (typeof value === "string") {
-      // String = new sub-step
+    if (isDeclareSteps(value)) {
+      // Declare all sub-steps upfront (show as pending)
+      if (!hasSubSteps) {
+        hasSubSteps = true;
+        ctx.handle.setType("group");
+      }
+      for (const label of value.declare) {
+        const subHandle = multi.add(label, {
+          type: "spinner",
+          indent: node.indent + 1,
+          insertAfter: lastInsertedId,
+        });
+        lastInsertedId = subHandle.id;
+        ctx._addSubHandle(label, subHandle);
+      }
+    } else if (typeof value === "string") {
+      // String = start a sub-step with this label
       ctx._completeSubStep();
 
       // First sub-step: change parent from spinner to group (no animation)
@@ -363,14 +378,21 @@ async function runGenerator<T>(
         ctx.handle.setType("group");
       }
 
-      const subHandle = multi.add(value, {
-        type: "spinner",
-        indent: node.indent + 1,
-        insertAfter: lastInsertedId,
-      });
-      lastInsertedId = subHandle.id; // Next sub-step inserts after this one
-      ctx._addSubHandle(value, subHandle);
-      subHandle.start();
+      // Check if already declared, otherwise create new
+      const existingHandle = ctx._getSubHandle?.(value);
+      if (existingHandle) {
+        ctx._setCurrentSubHandle(value, existingHandle);
+        existingHandle.start();
+      } else {
+        const subHandle = multi.add(value, {
+          type: "spinner",
+          indent: node.indent + 1,
+          insertAfter: lastInsertedId,
+        });
+        lastInsertedId = subHandle.id;
+        ctx._addSubHandle(value, subHandle);
+        subHandle.start();
+      }
     } else if (isProgressUpdate(value)) {
       // Progress update
       ctx.progress(value.current ?? 0, value.total ?? 0);
@@ -412,8 +434,23 @@ async function runAsyncGenerator<T>(
     const value = result.value;
 
     // Handle yielded values
-    if (typeof value === "string") {
-      // String = new sub-step
+    if (isDeclareSteps(value)) {
+      // Declare all sub-steps upfront (show as pending)
+      if (!hasSubSteps) {
+        hasSubSteps = true;
+        ctx.handle.setType("group");
+      }
+      for (const label of value.declare) {
+        const subHandle = multi.add(label, {
+          type: "spinner",
+          indent: node.indent + 1,
+          insertAfter: lastInsertedId,
+        });
+        lastInsertedId = subHandle.id;
+        ctx._addSubHandle(label, subHandle);
+      }
+    } else if (typeof value === "string") {
+      // String = start a sub-step with this label
       ctx._completeSubStep();
 
       // First sub-step: change parent from spinner to group (no animation)
@@ -422,14 +459,21 @@ async function runAsyncGenerator<T>(
         ctx.handle.setType("group");
       }
 
-      const subHandle = multi.add(value, {
-        type: "spinner",
-        indent: node.indent + 1,
-        insertAfter: lastInsertedId,
-      });
-      lastInsertedId = subHandle.id; // Next sub-step inserts after this one
-      ctx._addSubHandle(value, subHandle);
-      subHandle.start();
+      // Check if already declared, otherwise create new
+      const existingHandle = ctx._getSubHandle(value);
+      if (existingHandle) {
+        ctx._setCurrentSubHandle(value, existingHandle);
+        existingHandle.start();
+      } else {
+        const subHandle = multi.add(value, {
+          type: "spinner",
+          indent: node.indent + 1,
+          insertAfter: lastInsertedId,
+        });
+        lastInsertedId = subHandle.id;
+        ctx._addSubHandle(value, subHandle);
+        subHandle.start();
+      }
     } else if (isProgressUpdate(value)) {
       // Progress update
       ctx.progress(value.current ?? 0, value.total ?? 0);
@@ -493,11 +537,24 @@ interface ProgressUpdate {
   total?: number;
 }
 
+interface DeclareSteps {
+  declare: string[];
+}
+
 function isProgressUpdate(value: unknown): value is ProgressUpdate {
   return (
     value !== null &&
     typeof value === "object" &&
     !Array.isArray(value) &&
     ("current" in value || "total" in value)
+  );
+}
+
+function isDeclareSteps(value: unknown): value is DeclareSteps {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    "declare" in value &&
+    Array.isArray((value as DeclareSteps).declare)
   );
 }
