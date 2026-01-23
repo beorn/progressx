@@ -1,8 +1,8 @@
-# progressx
+# inkx-ui
 
-> Ergonomic progress indicators for Node.js CLI and React TUI apps
+> UI components for Ink/inkx TUI apps - spinners, progress bars, and more
 
-[![npm version](https://img.shields.io/npm/v/@beorn/progressx.svg)](https://www.npmjs.com/package/@beorn/progressx)
+[![npm version](https://img.shields.io/npm/v/@beorn/inkx-ui.svg)](https://www.npmjs.com/package/@beorn/inkx-ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <p align="center">
@@ -22,9 +22,9 @@
 ## Installation
 
 ```bash
-npm install @beorn/progressx
+npm install @beorn/inkx-ui
 # or
-bun add @beorn/progressx
+bun add @beorn/inkx-ui
 ```
 
 ## Quick Start
@@ -32,7 +32,7 @@ bun add @beorn/progressx
 ### Wrap any promise with a spinner
 
 ```ts
-import { withSpinner } from "@beorn/progressx/wrappers";
+import { withSpinner } from "@beorn/inkx-ui/wrappers";
 
 const data = await withSpinner(fetchData(), "Loading data...");
 ```
@@ -44,7 +44,7 @@ const data = await withSpinner(fetchData(), "Loading data...");
 ### Wrap callback-based APIs (perfect for existing patterns)
 
 ```ts
-import { withProgress } from "@beorn/progressx/wrappers";
+import { withProgress } from "@beorn/inkx-ui/wrappers";
 
 await withProgress((onProgress) => manager.syncFromFs(onProgress), {
   phases: {
@@ -62,7 +62,7 @@ await withProgress((onProgress) => manager.syncFromFs(onProgress), {
 ### Multi-task display
 
 ```ts
-import { MultiProgress } from "@beorn/progressx/cli";
+import { MultiProgress } from "@beorn/inkx-ui/cli";
 
 const multi = new MultiProgress();
 
@@ -87,12 +87,12 @@ multi.stop();
 
 ## API Reference
 
-### CLI Mode (`@beorn/progressx/cli`)
+### CLI Mode (`@beorn/inkx-ui/cli`)
 
 #### Spinner
 
 ```ts
-import { Spinner } from "@beorn/progressx/cli";
+import { Spinner } from "@beorn/inkx-ui/cli";
 
 // Quick start/stop
 const stop = Spinner.start("Loading...");
@@ -121,7 +121,7 @@ const spinner = new Spinner({
 #### ProgressBar
 
 ```ts
-import { ProgressBar } from "@beorn/progressx/cli";
+import { ProgressBar } from "@beorn/inkx-ui/cli";
 
 const bar = new ProgressBar({
   total: 100,
@@ -155,7 +155,7 @@ bar.setPhase("processing", { current: 0, total: 50 });
 #### MultiProgress
 
 ```ts
-import { MultiProgress } from "@beorn/progressx/cli";
+import { MultiProgress } from "@beorn/inkx-ui/cli";
 
 const multi = new MultiProgress();
 
@@ -178,12 +178,12 @@ task3.fail("3 tests failed");
 multi.stop();
 ```
 
-### Wrappers (`@beorn/progressx/wrappers`)
+### Wrappers (`@beorn/inkx-ui/wrappers`)
 
 #### withSpinner
 
 ```ts
-import { withSpinner } from "@beorn/progressx/wrappers";
+import { withSpinner } from "@beorn/inkx-ui/wrappers";
 
 // Basic
 const result = await withSpinner(asyncOperation(), "Loading...");
@@ -204,7 +204,7 @@ const result = await withSpinner(
 #### withProgress
 
 ```ts
-import { withProgress } from "@beorn/progressx/wrappers";
+import { withProgress } from "@beorn/inkx-ui/wrappers";
 
 // Wrap callback-based APIs
 await withProgress(
@@ -230,7 +230,7 @@ complete();
 #### wrapGenerator
 
 ```ts
-import { wrapGenerator } from "@beorn/progressx/wrappers";
+import { wrapGenerator } from "@beorn/inkx-ui/wrappers";
 
 // Wrap a progress generator
 function* processItems() {
@@ -246,7 +246,7 @@ await wrapGenerator(processItems(), "Processing items");
 #### wrapEmitter
 
 ```ts
-import { wrapEmitter, waitForEvent } from "@beorn/progressx/wrappers";
+import { wrapEmitter, waitForEvent } from "@beorn/inkx-ui/wrappers";
 
 // Track EventEmitter state
 const stop = wrapEmitter(syncManager, {
@@ -262,10 +262,10 @@ const stop = wrapEmitter(syncManager, {
 await waitForEvent(emitter, "ready", "Waiting...", { timeout: 5000 });
 ```
 
-### React Components (`@beorn/progressx/react`)
+### React Components (`@beorn/inkx-ui/react`)
 
 ```tsx
-import { Spinner, ProgressBar, Tasks, Task } from "@beorn/progressx/react";
+import { Spinner, ProgressBar, Tasks, Task } from "@beorn/inkx-ui/react";
 
 // Spinner
 <Spinner label="Loading..." style="dots" color="cyan" />
@@ -297,7 +297,7 @@ import {
   useProgressBar,
   useTasks,
   useProgress,
-} from "@beorn/progressx/react";
+} from "@beorn/inkx-ui/react";
 
 // Spinner frame for custom components
 const frame = useSpinnerFrame("dots");
@@ -322,7 +322,7 @@ import {
   ProgressProvider,
   ProgressIndicator,
   useProgress,
-} from "@beorn/progressx/react";
+} from "@beorn/inkx-ui/react";
 
 function App() {
   return (
