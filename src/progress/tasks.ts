@@ -107,7 +107,11 @@ export function tasks(): TaskBuilder {
           const result = task.work();
 
           if (isGenerator(result)) {
-            results[task.title] = await runGenerator(result, handle, task.title);
+            results[task.title] = await runGenerator(
+              result,
+              handle,
+              task.title,
+            );
           } else if (isPromiseLike(result)) {
             results[task.title] = await result;
           } else {
@@ -161,7 +165,9 @@ async function runGenerator<T>(
   return result.value;
 }
 
-function isGenerator(value: unknown): value is Generator<ProgressInfo, unknown, unknown> {
+function isGenerator(
+  value: unknown,
+): value is Generator<ProgressInfo, unknown, unknown> {
   return (
     value !== null &&
     typeof value === "object" &&

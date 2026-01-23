@@ -9,7 +9,11 @@ export { task, type TaskWrapper } from "./task.js";
 export { tasks, type TaskBuilder, type RunOptions } from "./tasks.js";
 
 // Re-export CLI progress components
-export { Spinner, createSpinner, type CallableSpinner } from "../cli/spinner.js";
+export {
+  Spinner,
+  createSpinner,
+  type CallableSpinner,
+} from "../cli/spinner.js";
 export { ProgressBar } from "../cli/progress-bar.js";
 export { MultiProgress, type TaskHandle } from "../cli/multi-progress.js";
 
