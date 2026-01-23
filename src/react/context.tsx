@@ -4,6 +4,7 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 import type { SpinnerStyle } from "../types.js";
+import { Spinner } from "./Spinner.js";
 
 /** Progress context state */
 interface ProgressContextState {
@@ -150,9 +151,6 @@ export function ProgressIndicator(): React.ReactElement | null {
   if (!isLoading) {
     return null;
   }
-
-  // Import dynamically to avoid circular dependency
-  const { Spinner } = require("./Spinner.js");
 
   return <Spinner label={loadingText} style={spinnerStyle} />;
 }

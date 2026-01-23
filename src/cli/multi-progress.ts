@@ -132,8 +132,9 @@ export class MultiProgress {
 
   /**
    * Stop the multi-progress display
+   * @param clear - If true, clear all task lines from terminal
    */
-  stop(): this {
+  stop(clear = false): this {
     if (!this.isActive) {
       return this;
     }
@@ -145,9 +146,20 @@ export class MultiProgress {
       this.timer = null;
     }
 
-    // Final render
-    this.render();
-    write("\n", this.stream);
+    if (clear && isTTY(this.stream)) {
+      // Clear all rendered lines
+      if (this.renderedLines > 0) {
+        write(cursorUp(this.renderedLines), this.stream);
+        for (let i = 0; i < this.renderedLines; i++) {
+          write(`${CLEAR_LINE}\n`, this.stream);
+        }
+        write(cursorUp(this.renderedLines), this.stream);
+      }
+    } else {
+      // Final render
+      this.render();
+      write("\n", this.stream);
+    }
 
     if (isTTY(this.stream)) {
       write(CURSOR_SHOW, this.stream);
