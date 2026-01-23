@@ -26,14 +26,29 @@
 import type { ProgressInfo } from "../types.js";
 import { MultiProgress, type TaskHandle } from "../cli/multi-progress.js";
 
+// Node.js globals for yielding to event loop
+declare function setImmediate(callback: (value?: unknown) => void): unknown;
+declare function setTimeout(
+  callback: (value?: unknown) => void,
+  ms: number,
+): unknown;
+
 /** Phase labels for common operations */
 const PHASE_LABELS: Record<string, string> = {
+  // Vault loading phases
+  discover: "Discovering files",
+  parse: "Parsing markdown",
+  apply: "Applying changes",
+  resolve: "Resolving links",
+  materialize: "Evaluating rules",
+  // Board building
+  board: "Building view",
+  // Legacy/alternative names
   reading: "Reading events",
   applying: "Applying events",
   rules: "Evaluating rules",
   scanning: "Scanning files",
   reconciling: "Reconciling changes",
-  board: "Building view",
 };
 
 /** Task definition */
@@ -99,7 +114,6 @@ export function tasks(): TaskBuilder {
       try {
         for (const task of taskList) {
           const handle = handles.get(task.title)!;
-          handle.start();
 
           // Force render before potentially blocking operation
           await new Promise((r) => setImmediate(r));
@@ -107,18 +121,22 @@ export function tasks(): TaskBuilder {
           const result = task.work();
 
           if (isGenerator(result)) {
+            // Generator: parent stays static, phases animate underneath
             results[task.title] = await runGenerator(
               result,
               handle,
               task.title,
+              multi,
             );
           } else if (isPromiseLike(result)) {
+            handle.start();
             results[task.title] = await result;
+            handle.complete();
           } else {
+            handle.start();
             results[task.title] = result;
+            handle.complete();
           }
-
-          handle.complete();
         }
       } finally {
         multi.stop(options?.clear ?? false);
@@ -133,34 +151,71 @@ export function tasks(): TaskBuilder {
 
 /**
  * Run a generator task with progress updates
+ * Parent task stays visible while sub-phases are indented below
  */
 async function runGenerator<T>(
   gen: Generator<ProgressInfo, T, unknown>,
-  handle: TaskHandle,
+  parentHandle: TaskHandle,
   baseTitle: string,
+  multi: MultiProgress,
 ): Promise<T> {
   let result = gen.next();
+  let currentPhase: string | undefined;
+  let currentPhaseHandle: TaskHandle | null = null;
+  let lastInsertId = parentHandle.id; // Insert phases after parent (then after each other)
+  let phaseStartTime = Date.now();
+  const taskStartTime = Date.now();
 
   while (!result.done) {
     const info = result.value;
     const phase = info.phase ?? "";
-    const phaseLabel = PHASE_LABELS[phase] ?? (phase || baseTitle);
 
-    // Update title with phase and progress count
-    if (info.total && info.total > 0) {
-      handle.setTitle(`${phaseLabel} (${info.current}/${info.total})`);
-    } else {
-      handle.setTitle(phaseLabel);
+    // When phase changes, complete current phase and start new one (indented)
+    if (phase && phase !== currentPhase) {
+      if (currentPhaseHandle && currentPhase) {
+        // Complete previous phase with timing
+        const elapsed = Date.now() - phaseStartTime;
+        const prevLabel = PHASE_LABELS[currentPhase] ?? currentPhase;
+        currentPhaseHandle.complete(`${prevLabel} (${elapsed}ms)`);
+      }
+
+      // Start new phase line (indented under parent, inserted after last phase)
+      currentPhase = phase;
+      phaseStartTime = Date.now();
+      const phaseLabel = PHASE_LABELS[phase] ?? phase;
+      currentPhaseHandle = multi.add(phaseLabel, {
+        type: "spinner",
+        indent: 1,
+        insertAfter: lastInsertId,
+      });
+      lastInsertId = currentPhaseHandle.id;
+      currentPhaseHandle.start();
+    }
+
+    // Update progress count on current phase line
+    if (currentPhaseHandle && info.total && info.total > 0) {
+      const phaseLabel = PHASE_LABELS[phase] ?? phase;
+      currentPhaseHandle.setTitle(
+        `${phaseLabel} (${info.current}/${info.total})`,
+      );
     }
 
     // Yield to event loop for animation
-    await new Promise((r) => setImmediate(r));
+    await new Promise((r) => setTimeout(r, 0));
 
     result = gen.next();
   }
 
-  // Reset title on completion
-  handle.setTitle(baseTitle);
+  // Complete final phase
+  if (currentPhaseHandle && currentPhase) {
+    const elapsed = Date.now() - phaseStartTime;
+    const finalLabel = PHASE_LABELS[currentPhase] ?? currentPhase;
+    currentPhaseHandle.complete(`${finalLabel} (${elapsed}ms)`);
+  }
+
+  // Complete parent task with total timing
+  const totalElapsed = Date.now() - taskStartTime;
+  parentHandle.complete(`${baseTitle} (${totalElapsed}ms)`);
 
   return result.value;
 }

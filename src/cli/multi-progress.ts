@@ -32,6 +32,7 @@ interface TaskConfig {
   total?: number;
   current?: number;
   spinnerStyle?: SpinnerStyle;
+  indent?: number;
 }
 
 /** Internal task state */
@@ -74,6 +75,7 @@ export class MultiProgress {
 
   /**
    * Add a new task
+   * @param insertAfter - ID of task to insert after (for hierarchical display)
    */
   add(
     title: string,
@@ -81,6 +83,8 @@ export class MultiProgress {
       type?: "spinner" | "bar";
       total?: number;
       spinnerStyle?: SpinnerStyle;
+      indent?: number;
+      insertAfter?: string;
     } = {},
   ): TaskHandle {
     const id = `task-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -93,10 +97,22 @@ export class MultiProgress {
       total: options.total,
       current: 0,
       spinnerStyle: options.spinnerStyle ?? "dots",
+      indent: options.indent ?? 0,
     };
 
     this.tasks.set(id, task);
-    this.taskOrder.push(id);
+
+    // Insert after specified task, or append to end
+    if (options.insertAfter) {
+      const afterIndex = this.taskOrder.indexOf(options.insertAfter);
+      if (afterIndex >= 0) {
+        this.taskOrder.splice(afterIndex + 1, 0, id);
+      } else {
+        this.taskOrder.push(id);
+      }
+    } else {
+      this.taskOrder.push(id);
+    }
 
     if (this.isActive) {
       this.render();
@@ -208,7 +224,8 @@ export class MultiProgress {
         icon = STATUS_ICONS[task.status];
       }
 
-      let line = `${icon} ${task.title}`;
+      const indent = "  ".repeat(task.indent ?? 0);
+      let line = `${indent}${icon} ${task.title}`;
 
       // Add progress bar for bar type
       if (task.type === "bar" && task.total && task.total > 0) {
@@ -239,18 +256,23 @@ export class MultiProgress {
 class TaskHandle {
   constructor(
     private multi: MultiProgress,
-    private id: string,
+    private _id: string,
   ) {}
+
+  /** Get task ID (for insertAfter) */
+  get id(): string {
+    return this._id;
+  }
 
   /** Start the task (set status to running) */
   start(): this {
-    this.multi._updateTask(this.id, { status: "running" });
+    this.multi._updateTask(this._id, { status: "running" });
     return this;
   }
 
   /** Update progress (for bar type) */
   update(current: number): this {
-    this.multi._updateTask(this.id, { current });
+    this.multi._updateTask(this._id, { current });
     return this;
   }
 
@@ -258,7 +280,7 @@ class TaskHandle {
   complete(title?: string): this {
     const updates: Partial<TaskState> = { status: "completed" };
     if (title) updates.title = title;
-    this.multi._updateTask(this.id, updates);
+    this.multi._updateTask(this._id, updates);
     return this;
   }
 
@@ -266,7 +288,7 @@ class TaskHandle {
   fail(title?: string): this {
     const updates: Partial<TaskState> = { status: "failed" };
     if (title) updates.title = title;
-    this.multi._updateTask(this.id, updates);
+    this.multi._updateTask(this._id, updates);
     return this;
   }
 
@@ -274,19 +296,19 @@ class TaskHandle {
   skip(title?: string): this {
     const updates: Partial<TaskState> = { status: "skipped" };
     if (title) updates.title = title;
-    this.multi._updateTask(this.id, updates);
+    this.multi._updateTask(this._id, updates);
     return this;
   }
 
   /** Update task title */
   setTitle(title: string): this {
-    this.multi._updateTask(this.id, { title });
+    this.multi._updateTask(this._id, { title });
     return this;
   }
 
   /** Get current status */
   get status(): TaskStatus {
-    return this.multi._getTask(this.id)?.status ?? "pending";
+    return this.multi._getTask(this._id)?.status ?? "pending";
   }
 }
 

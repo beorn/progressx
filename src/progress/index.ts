@@ -4,7 +4,10 @@
  * Fluent APIs for displaying progress during async operations.
  */
 
-// Fluent task wrappers
+// Modern fluent API (recommended)
+export { steps, type StepBuilder, type ExecuteOptions } from "./steps.js";
+
+// Legacy task wrappers (deprecated - use steps() instead)
 export { task, type TaskWrapper } from "./task.js";
 export { tasks, type TaskBuilder, type RunOptions } from "./tasks.js";
 
@@ -18,4 +21,4 @@ export { ProgressBar } from "../cli/progress-bar.js";
 export { MultiProgress, type TaskHandle } from "../cli/multi-progress.js";
 
 // Re-export types
-export type { ProgressInfo } from "../types.js";
+export type { ProgressInfo, StepProgress } from "../types.js";

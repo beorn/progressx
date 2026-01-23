@@ -2,12 +2,35 @@
  * Core types for inkx-ui progress components
  */
 
-/** Progress info passed to callbacks (matches km pattern) */
+/** Progress info passed to callbacks (legacy, use StepProgress for steps()) */
 export interface ProgressInfo {
   phase?: string;
   current: number;
   total: number;
   detail?: string;
+}
+
+/**
+ * Progress info yielded from step generators
+ *
+ * Yield with `label` to create/update a sub-step:
+ * ```typescript
+ * function* loadVault() {
+ *   yield { label: "Discovering files" };
+ *   // ... do work ...
+ *   yield { label: "Parsing markdown", current: 0, total: 100 };
+ *   // ... do work ...
+ *   yield { label: "Parsing markdown", current: 100, total: 100 };
+ * }
+ * ```
+ */
+export interface StepProgress {
+  /** Display label for sub-step (changing label creates new sub-step) */
+  label?: string;
+  /** Current progress count */
+  current?: number;
+  /** Total count for progress display */
+  total?: number;
 }
 
 /** Callback signature for progress reporting */
