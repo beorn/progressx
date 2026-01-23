@@ -4,17 +4,18 @@
 
 import { describe, it, expect } from "bun:test";
 import { withSpinner, createSpinner } from "../src/wrappers/with-spinner.js";
-import { withProgress, createProgressCallback } from "../src/wrappers/with-progress.js";
+import {
+  withProgress,
+  createProgressCallback,
+} from "../src/wrappers/with-progress.js";
 import { wrapGenerator } from "../src/wrappers/wrap-generator.js";
 import type { ProgressCallback } from "../src/types.js";
 
 describe("withSpinner", () => {
   it("resolves with the promise result", async () => {
-    const result = await withSpinner(
-      Promise.resolve(42),
-      "Loading",
-      { clearOnComplete: true }
-    );
+    const result = await withSpinner(Promise.resolve(42), "Loading", {
+      clearOnComplete: true,
+    });
     expect(result).toBe(42);
   });
 
@@ -22,14 +23,16 @@ describe("withSpinner", () => {
     const result = await withSpinner(
       () => Promise.resolve("hello"),
       "Loading",
-      { clearOnComplete: true }
+      { clearOnComplete: true },
     );
     expect(result).toBe("hello");
   });
 
   it("rejects if promise rejects", async () => {
     await expect(
-      withSpinner(Promise.reject(new Error("fail")), "Loading", { clearOnComplete: true })
+      withSpinner(Promise.reject(new Error("fail")), "Loading", {
+        clearOnComplete: true,
+      }),
     ).rejects.toThrow("fail");
   });
 });
@@ -38,7 +41,7 @@ describe("createSpinner", () => {
   it("returns promise and spinner", async () => {
     const [promise, spinner] = createSpinner(
       Promise.resolve("result"),
-      "Loading"
+      "Loading",
     );
 
     expect(spinner.spinning).toBe(true);
@@ -59,7 +62,7 @@ describe("withProgress", () => {
         calls.push({ current: 10, total: 10 });
         return "done";
       },
-      { clearOnComplete: true }
+      { clearOnComplete: true },
     );
 
     expect(calls).toHaveLength(2);
@@ -76,14 +79,16 @@ describe("withProgress", () => {
       {
         phases: { scan: "Scanning", process: "Processing" },
         clearOnComplete: true,
-      }
+      },
     );
   });
 });
 
 describe("createProgressCallback", () => {
   it("returns callback and complete function", () => {
-    const [callback, complete] = createProgressCallback({ clearOnComplete: true });
+    const [callback, complete] = createProgressCallback({
+      clearOnComplete: true,
+    });
 
     expect(typeof callback).toBe("function");
     expect(typeof complete).toBe("function");
@@ -103,7 +108,9 @@ describe("wrapGenerator", () => {
       return "done";
     }
 
-    const result = await wrapGenerator(gen(), "Processing", { clearOnComplete: true });
+    const result = await wrapGenerator(gen(), "Processing", {
+      clearOnComplete: true,
+    });
     expect(result).toBe("done");
   });
 });

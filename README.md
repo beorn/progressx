@@ -46,16 +46,13 @@ const data = await withSpinner(fetchData(), "Loading data...");
 ```ts
 import { withProgress } from "@beorn/progressx/wrappers";
 
-await withProgress(
-  (onProgress) => manager.syncFromFs(onProgress),
-  {
-    phases: {
-      scanning: "Scanning files",
-      reconciling: "Reconciling changes",
-      rules: "Evaluating rules"
-    }
-  }
-);
+await withProgress((onProgress) => manager.syncFromFs(onProgress), {
+  phases: {
+    scanning: "Scanning files",
+    reconciling: "Reconciling changes",
+    rules: "Evaluating rules",
+  },
+});
 ```
 
 <p align="center">
@@ -145,6 +142,7 @@ bar.setPhase("processing", { current: 0, total: 50 });
 ```
 
 **Format tokens:**
+
 - `:bar` - The progress bar
 - `:percent` - Percentage (0-100%)
 - `:current` - Current value
@@ -191,16 +189,15 @@ import { withSpinner } from "@beorn/progressx/wrappers";
 const result = await withSpinner(asyncOperation(), "Loading...");
 
 // With options
-const result = await withSpinner(
-  operation(),
-  "Processing...",
-  { style: "arc", clearOnComplete: true }
-);
+const result = await withSpinner(operation(), "Processing...", {
+  style: "arc",
+  clearOnComplete: true,
+});
 
 // Dynamic text
 const result = await withSpinner(
   longOperation(),
-  (elapsed) => `Processing... (${elapsed}s)`
+  (elapsed) => `Processing... (${elapsed}s)`,
 );
 ```
 
@@ -257,8 +254,8 @@ const stop = wrapEmitter(syncManager, {
   events: {
     ready: { text: "Ready", succeed: true },
     "state-change": { getText: (s) => `State: ${s}` },
-    error: { fail: true }
-  }
+    error: { fail: true },
+  },
 });
 
 // Wait for specific event
@@ -295,7 +292,12 @@ import { Spinner, ProgressBar, Tasks, Task } from "@beorn/progressx/react";
 #### Hooks
 
 ```tsx
-import { useSpinnerFrame, useProgressBar, useTasks, useProgress } from "@beorn/progressx/react";
+import {
+  useSpinnerFrame,
+  useProgressBar,
+  useTasks,
+  useProgress,
+} from "@beorn/progressx/react";
 
 // Spinner frame for custom components
 const frame = useSpinnerFrame("dots");
@@ -316,7 +318,11 @@ const { showSpinner, hideSpinner, updateProgress } = useProgress();
 #### Context Provider
 
 ```tsx
-import { ProgressProvider, ProgressIndicator, useProgress } from "@beorn/progressx/react";
+import {
+  ProgressProvider,
+  ProgressIndicator,
+  useProgress,
+} from "@beorn/progressx/react";
 
 function App() {
   return (
@@ -340,28 +346,28 @@ function DeepComponent() {
 
 ## Spinner Styles
 
-| Style | Preview | Description |
-|-------|---------|-------------|
-| `dots` | ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ | Braille dots (default) |
-| `line` | -\\|/ | Simple line |
-| `arc` | ◜◠◝◞◡◟ | Arc rotation |
-| `bounce` | ⠁⠂⠄⠂ | Bouncing dot |
-| `pulse` | █▓▒░▒▓ | Pulsing block |
+| Style    | Preview    | Description            |
+| -------- | ---------- | ---------------------- | ----------- |
+| `dots`   | ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ | Braille dots (default) |
+| `line`   | -\\        | /                      | Simple line |
+| `arc`    | ◜◠◝◞◡◟     | Arc rotation           |
+| `bounce` | ⠁⠂⠄⠂       | Bouncing dot           |
+| `pulse`  | █▓▒░▒▓     | Pulsing block          |
 
 ## Comparison
 
-| Feature | progressx | ora | cli-progress | listr2 |
-|---------|-----------|-----|--------------|--------|
-| Spinners | ✅ | ✅ | ❌ | ✅ |
-| Progress bars | ✅ | ❌ | ✅ | ✅ |
-| Multi-task | ✅ | ❌ | ✅ | ✅ |
-| Promise wrapper | ✅ | ✅ | ❌ | ❌ |
-| Callback wrapper | ✅ | ❌ | ❌ | ❌ |
-| Generator wrapper | ✅ | ❌ | ❌ | ❌ |
-| EventEmitter wrapper | ✅ | ❌ | ❌ | ❌ |
-| React components | ✅ | ❌ | ❌ | ❌ |
-| ETA calculation | ✅ | ❌ | ✅ | ✅ |
-| Zero deps (CLI) | ✅ | ❌ | ✅ | ❌ |
+| Feature              | progressx | ora | cli-progress | listr2 |
+| -------------------- | --------- | --- | ------------ | ------ |
+| Spinners             | ✅        | ✅  | ❌           | ✅     |
+| Progress bars        | ✅        | ❌  | ✅           | ✅     |
+| Multi-task           | ✅        | ❌  | ✅           | ✅     |
+| Promise wrapper      | ✅        | ✅  | ❌           | ❌     |
+| Callback wrapper     | ✅        | ❌  | ❌           | ❌     |
+| Generator wrapper    | ✅        | ❌  | ❌           | ❌     |
+| EventEmitter wrapper | ✅        | ❌  | ❌           | ❌     |
+| React components     | ✅        | ❌  | ❌           | ❌     |
+| ETA calculation      | ✅        | ❌  | ✅           | ✅     |
+| Zero deps (CLI)      | ✅        | ❌  | ✅           | ❌     |
 
 ## Before/After
 
@@ -375,8 +381,12 @@ try {
       if (lastPhase) process.stdout.write("\n");
       lastPhase = info.phase;
     }
-    const phaseName = info.phase === "scanning" ? "Scanning" :
-                      info.phase === "reconciling" ? "Reconciling" : "Rules";
+    const phaseName =
+      info.phase === "scanning"
+        ? "Scanning"
+        : info.phase === "reconciling"
+          ? "Reconciling"
+          : "Rules";
     const progress = info.total > 0 ? ` [${info.current}/${info.total}]` : "";
     process.stdout.write(`\r${chalk.dim(phaseName)}${progress}\x1b[K`);
   });
@@ -390,10 +400,9 @@ try {
 ### After (with progressx)
 
 ```ts
-await withProgress(
-  (onProgress) => manager.syncFromFs(onProgress),
-  { phases: { scanning: "Scanning", reconciling: "Reconciling", rules: "Rules" } }
-);
+await withProgress((onProgress) => manager.syncFromFs(onProgress), {
+  phases: { scanning: "Scanning", reconciling: "Reconciling", rules: "Rules" },
+});
 ```
 
 ## Contributing

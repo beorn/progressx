@@ -70,7 +70,8 @@ export function wrapEmitter(
         spinner.succeed();
         cleanup();
       } else if (eventConfig.fail) {
-        const message = data instanceof Error ? data.message : String(data ?? "Failed");
+        const message =
+          data instanceof Error ? data.message : String(data ?? "Failed");
         spinner.fail(message);
         cleanup();
       } else if (eventConfig.stop) {

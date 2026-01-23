@@ -221,7 +221,7 @@ export class ProgressBar {
 
     // Get phase display name
     const phaseDisplay = this.phase
-      ? this.phases[this.phase] ?? this.phase
+      ? (this.phases[this.phase] ?? this.phase)
       : "";
 
     // Calculate rate

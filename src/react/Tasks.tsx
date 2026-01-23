@@ -101,9 +101,7 @@ export function Tasks({
  * }
  * ```
  */
-export function useTasks(
-  initialTasks: Array<{ id: string; title: string }>,
-) {
+export function useTasks(initialTasks: Array<{ id: string; title: string }>) {
   const [tasks, setTasks] = React.useState<
     Array<{
       id: string;

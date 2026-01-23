@@ -33,7 +33,12 @@
  * ```
  */
 
-export { Spinner, SPINNER_FRAMES } from "./spinner.js";
+export {
+  Spinner,
+  SPINNER_FRAMES,
+  createSpinner,
+  type CallableSpinner,
+} from "./spinner.js";
 export { ProgressBar } from "./progress-bar.js";
 export { MultiProgress, type TaskHandle } from "./multi-progress.js";
 export * from "./ansi.js";

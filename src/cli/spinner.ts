@@ -58,7 +58,7 @@ export class Spinner {
     const options: SpinnerOptions =
       typeof textOrOptions === "string"
         ? { text: textOrOptions }
-        : textOrOptions ?? {};
+        : (textOrOptions ?? {});
 
     this.text = options.text ?? "";
     this.style = options.style ?? "dots";
@@ -207,11 +207,75 @@ export class Spinner {
    * stop();
    * ```
    */
-  static start(
-    textOrOptions?: string | SpinnerOptions,
-  ): () => void {
+  static start(textOrOptions?: string | SpinnerOptions): () => void {
     const spinner = new Spinner(textOrOptions);
     spinner.start();
     return () => spinner.stop();
   }
+}
+
+/**
+ * Callable spinner interface - call with text to show/update
+ *
+ * @example
+ * ```ts
+ * {
+ *   using spinner = createSpinner({ style: "dots" });
+ *   spinner("Loading...");  // Shows spinner with text
+ *   spinner("Still loading...");  // Updates text
+ * } // Auto-stops via Symbol.dispose
+ * ```
+ */
+export interface CallableSpinner extends Disposable {
+  /** Call with text to show/update the spinner */
+  (text: string): void;
+  /** Stop the spinner */
+  stop(): void;
+  /** Stop with success message (green checkmark) */
+  succeed(text?: string): void;
+  /** Stop with failure message (red X) */
+  fail(text?: string): void;
+  /** Stop with warning message (yellow warning) */
+  warn(text?: string): void;
+  /** Stop with info message (blue info) */
+  info(text?: string): void;
+}
+
+/**
+ * Create a callable, disposable spinner
+ *
+ * The spinner is lazy - it won't show anything until you call it with text.
+ * Use with `using` for automatic cleanup:
+ *
+ * @example
+ * ```ts
+ * {
+ *   using spinner = createSpinner({ style: "dots" });
+ *   // Nothing visible yet
+ *
+ *   spinner("Loading vault...");  // Now shows spinner
+ *   spinner("Applying events...");  // Updates text
+ * } // Auto-stops via Symbol.dispose
+ * ```
+ */
+export function createSpinner(options?: SpinnerOptions): CallableSpinner {
+  const spinner = new Spinner({ ...options, text: "" });
+
+  const callable = ((text: string) => {
+    // Always restart if not spinning (handles initial call and after succeed/fail/etc)
+    if (!spinner.spinning) {
+      spinner.start(text);
+    } else {
+      spinner.currentText = text;
+    }
+  }) as CallableSpinner;
+
+  callable.stop = () => spinner.stop();
+  callable.succeed = (text) => spinner.succeed(text);
+  callable.fail = (text) => spinner.fail(text);
+  callable.warn = (text) => spinner.warn(text);
+  callable.info = (text) => spinner.info(text);
+  callable[Symbol.dispose] = () => spinner.stop();
+
+  return callable;
 }

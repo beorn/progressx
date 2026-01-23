@@ -66,11 +66,14 @@ export function ProgressProvider({
     total: number;
   } | null>(null);
 
-  const showSpinner = useCallback((text: string, style: SpinnerStyle = "dots") => {
-    setLoadingText(text);
-    setSpinnerStyle(style);
-    setIsLoading(true);
-  }, []);
+  const showSpinner = useCallback(
+    (text: string, style: SpinnerStyle = "dots") => {
+      setLoadingText(text);
+      setSpinnerStyle(style);
+      setIsLoading(true);
+    },
+    [],
+  );
 
   const hideSpinner = useCallback(() => {
     setIsLoading(false);

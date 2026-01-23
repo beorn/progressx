@@ -204,7 +204,8 @@ export class MultiProgress {
         const barWidth = 20;
         const filled = Math.round(barWidth * percent);
         const empty = barWidth - filled;
-        const bar = chalk.cyan("█".repeat(filled)) + chalk.gray("░".repeat(empty));
+        const bar =
+          chalk.cyan("█".repeat(filled)) + chalk.gray("░".repeat(empty));
         line += ` ${bar} ${Math.round(percent * 100)}%`;
       }
 
