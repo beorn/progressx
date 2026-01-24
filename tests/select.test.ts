@@ -90,7 +90,7 @@ describe("withSelect wrapper", () => {
       _options: Array<{ label: string; value: T }>,
       _opts?: { initial?: number; maxVisible?: number },
     ) => {
-      return _options[0].value;
+      return _options[0]!.value;
     };
 
     expect(_typeCheck).toBeDefined();

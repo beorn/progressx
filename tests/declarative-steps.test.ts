@@ -33,10 +33,10 @@ describe("parseStepsDef", () => {
     const nodes = parseStepsDef({ loadModules, parseMarkdown });
 
     expect(nodes).toHaveLength(2);
-    expect(nodes[0].label).toBe("Load modules");
-    expect(nodes[0].key).toBe("loadModules");
-    expect(nodes[0].work).toBe(loadModules);
-    expect(nodes[1].label).toBe("Parse markdown");
+    expect(nodes[0]!.label).toBe("Load modules");
+    expect(nodes[0]!.key).toBe("loadModules");
+    expect(nodes[0]!.work).toBe(loadModules);
+    expect(nodes[1]!.label).toBe("Parse markdown");
   });
 
   it("supports custom names via tuple", () => {
@@ -46,8 +46,8 @@ describe("parseStepsDef", () => {
     });
 
     expect(nodes).toHaveLength(1);
-    expect(nodes[0].label).toBe("Custom Label");
-    expect(nodes[0].work).toBe(fn);
+    expect(nodes[0]!.label).toBe("Custom Label");
+    expect(nodes[0]!.work).toBe(fn);
   });
 
   it("creates nested groups", () => {
@@ -62,10 +62,10 @@ describe("parseStepsDef", () => {
     });
 
     expect(nodes).toHaveLength(1);
-    expect(nodes[0].label).toBe("Outer");
-    expect(nodes[0].children).toHaveLength(2);
-    expect(nodes[0].children![0].label).toBe("Inner 1");
-    expect(nodes[0].children![0].indent).toBe(1);
+    expect(nodes[0]!.label).toBe("Outer");
+    expect(nodes[0]!.children).toHaveLength(2);
+    expect(nodes[0]!.children![0]!.label).toBe("Inner 1");
+    expect(nodes[0]!.children![0]!.indent).toBe(1);
   });
 });
 
@@ -77,8 +77,8 @@ describe("declarative steps()", () => {
     const runner = steps({ loadModules, buildView });
 
     expect(runner._steps).toHaveLength(2);
-    expect(runner._steps[0].label).toBe("Load modules");
-    expect(runner._steps[1].label).toBe("Build view");
+    expect(runner._steps[0]!.label).toBe("Load modules");
+    expect(runner._steps[1]!.label).toBe("Build view");
   });
 
   it("run() executes steps sequentially", async () => {
@@ -105,8 +105,8 @@ describe("declarative steps()", () => {
   it("pipe() chains outputs to inputs", async () => {
     const runner = steps({
       step1: () => 10,
-      step2: (x: number) => x * 2,
-      step3: (x: number) => x + 5,
+      step2: ((x: number) => x * 2) as () => number,
+      step3: ((x: number) => x + 5) as () => number,
     });
 
     const result = await runner.pipe({ clear: true });
