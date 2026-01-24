@@ -149,6 +149,13 @@ export class MultiProgress {
   }
 
   /**
+   * Dispose the multi-progress display (calls stop)
+   */
+  [Symbol.dispose](): void {
+    this.stop();
+  }
+
+  /**
    * Stop the multi-progress display
    * @param clear - If true, clear all task lines from terminal
    */

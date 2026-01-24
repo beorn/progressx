@@ -232,4 +232,11 @@ export class ProgressBar {
   get percentage(): number {
     return Math.round(this.ratio * 100);
   }
+
+  /**
+   * Dispose the progress bar (calls stop)
+   */
+  [Symbol.dispose](): void {
+    this.stop();
+  }
 }
