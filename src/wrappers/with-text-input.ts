@@ -145,7 +145,7 @@ export async function withTextInput(
 
       // Handle special keys
       for (let i = 0; i < input.length; i++) {
-        const char = input[i];
+        const char = input[i]!;
         const code = char.charCodeAt(0);
 
         // Enter (CR or LF)

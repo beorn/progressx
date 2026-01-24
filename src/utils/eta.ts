@@ -43,8 +43,8 @@ export function calculateETA(
     return null;
   }
 
-  const first = buffer[0];
-  const last = buffer[buffer.length - 1];
+  const first = buffer[0]!;
+  const last = buffer[buffer.length - 1]!;
 
   const elapsed = (last.time - first.time) / 1000; // seconds
   const progress = last.value - first.value;

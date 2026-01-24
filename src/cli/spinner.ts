@@ -182,7 +182,7 @@ export class Spinner {
     const colorFn = (chalk as unknown as Record<string, (s: string) => string>)[
       this.color
     ];
-    const coloredFrame = colorFn ? colorFn(frame) : frame;
+    const coloredFrame = colorFn ? colorFn(frame!) : frame!
     const output = this.text ? `${coloredFrame} ${this.text}` : coloredFrame;
 
     if (isTTY(this.stream)) {

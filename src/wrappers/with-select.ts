@@ -45,7 +45,7 @@ export async function withSelect<T>(
 
   if (!isTTY(stream) || !stdin.isTTY) {
     // Non-interactive mode: return first option or initial
-    return options[initial]?.value ?? options[0].value;
+    return options[initial]?.value ?? options[0]!.value;
   }
 
   return new Promise((resolve, reject) => {
@@ -106,7 +106,7 @@ export async function withSelect<T>(
         const isHighlighted = actualIndex === highlightIndex;
 
         const indicator = isHighlighted ? chalk.cyan(">") : " ";
-        const label = isHighlighted ? chalk.cyan(option.label) : option.label;
+        const label = isHighlighted ? chalk.cyan(option!.label) : option!.label;
 
         write(
           `${CURSOR_TO_START}${indicator} ${label}${CLEAR_LINE_END}\n`,
@@ -148,7 +148,7 @@ export async function withSelect<T>(
       // Enter/Return
       if (key === "\r" || key === "\n") {
         cleanup();
-        resolve(options[highlightIndex].value);
+        resolve(options[highlightIndex]!.value);
         return;
       }
 
@@ -189,7 +189,7 @@ export async function withSelect<T>(
       // Space to select (optional alternative to Enter)
       if (key === " ") {
         cleanup();
-        resolve(options[highlightIndex].value);
+        resolve(options[highlightIndex]!.value);
         return;
       }
     }

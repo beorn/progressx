@@ -47,7 +47,7 @@ export function Task({
     <div data-progressx-task data-status={status} data-color={color}>
       <span data-icon>{icon}</span>
       <span data-title> {title}</span>
-      {children && <div data-children>{children}</div>}
+      {children ? <div data-children>{children}</div> : null}
     </div>
   );
 }

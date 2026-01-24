@@ -74,5 +74,5 @@ export function useSpinnerFrame(style: SpinnerStyle = "dots"): string {
     return () => clearInterval(timer);
   }, [frames.length, interval]);
 
-  return frames[frameIndex];
+  return frames[frameIndex]!;
 }
