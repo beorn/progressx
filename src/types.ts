@@ -15,7 +15,7 @@ export interface ProgressInfo {
  *
  * Yield with `label` to create/update a sub-step:
  * ```typescript
- * function* loadVault() {
+ * function* loadRepo() {
  *   yield { label: "Discovering files" };
  *   // ... do work ...
  *   yield { label: "Parsing markdown", current: 0, total: 100 };

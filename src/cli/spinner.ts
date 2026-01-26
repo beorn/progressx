@@ -253,7 +253,7 @@ export interface CallableSpinner extends Disposable {
  *   using spinner = createSpinner({ style: "dots" });
  *   // Nothing visible yet
  *
- *   spinner("Loading vault...");  // Now shows spinner
+ *   spinner("Loading repo...");  // Now shows spinner
  *   spinner("Applying events...");  // Updates text
  * } // Auto-stops via Symbol.dispose
  * ```

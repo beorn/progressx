@@ -12,7 +12,7 @@
  *
  * const loader = steps({
  *   loadModules,           // Auto-named: "Load modules"
- *   loadVault: {           // Group: "Load vault"
+ *   loadRepo: {           // Group: "Load repo"
  *     discover,            //   "Discover"
  *     parse,               //   "Parse"
  *   },
@@ -158,7 +158,7 @@ export interface StepBuilder {
  * ```typescript
  * const loader = steps({
  *   loadModules,
- *   loadVault: { discover, parse },
+ *   loadRepo: { discover, parse },
  * });
  * const results = await loader.run({ clear: true });
  * ```

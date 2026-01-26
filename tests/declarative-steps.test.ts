@@ -140,7 +140,7 @@ describe("declarative steps()", () => {
   });
 
   it("handles sync generators with sub-steps", async () => {
-    function* loadVault() {
+    function* loadRepo() {
       yield "Discovering files";
       yield { current: 1, total: 10 };
       yield { current: 10, total: 10 };
@@ -148,14 +148,14 @@ describe("declarative steps()", () => {
       return { files: 10 };
     }
 
-    const runner = steps({ loadVault });
+    const runner = steps({ loadRepo });
     const results = await runner.run({ clear: true });
 
-    expect(results.loadVault).toEqual({ files: 10 });
+    expect(results.loadRepo).toEqual({ files: 10 });
   });
 
   it("handles async generators with sub-steps", async () => {
-    async function* loadVault() {
+    async function* loadRepo() {
       yield "Discovering files";
       await Promise.resolve();
       yield { current: 5, total: 10 };
@@ -163,10 +163,10 @@ describe("declarative steps()", () => {
       return { count: 42 };
     }
 
-    const runner = steps({ loadVault });
+    const runner = steps({ loadRepo });
     const results = await runner.run({ clear: true });
 
-    expect(results.loadVault).toEqual({ count: 42 });
+    expect(results.loadRepo).toEqual({ count: 42 });
   });
 });
 

@@ -33,7 +33,7 @@ declare function setTimeout(
 
 /** Phase labels for common operations */
 const PHASE_LABELS: Record<string, string> = {
-  // Vault loading phases
+  // Repo loading phases
   discover: "Discovering files",
   parse: "Parsing markdown",
   apply: "Applying changes",

@@ -9,7 +9,7 @@
  *
  * const loader = steps({
  *   loadModules,           // Auto-named: "Load modules"
- *   loadVault: {           // Group: "Load vault"
+ *   loadRepo: {           // Group: "Load repo"
  *     discover,            //   "Discover"
  *     parse,               //   "Parse"
  *   },

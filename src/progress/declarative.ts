@@ -101,7 +101,7 @@ export interface StepsRunner<T extends StepsDef> {
  * ```typescript
  * const loader = stepsDeclarative({
  *   loadModules,           // "Load modules"
- *   loadVault: {           // "Load vault" (group)
+ *   loadRepo: {           // "Load repo" (group)
  *     discover,            //   "Discover"
  *     parse,               //   "Parse"
  *   },
