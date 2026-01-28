@@ -22,9 +22,9 @@
 ## Installation
 
 ```bash
-npm install @beorn/inkx-ui
-# or
 bun add @beorn/inkx-ui
+# or
+npm install @beorn/inkx-ui
 ```
 
 ## Quick Start
